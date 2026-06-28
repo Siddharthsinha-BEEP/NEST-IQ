@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NestIQ — Find Your Home in 48 Hours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a6b4a;
+    --green-light: #2d9b6f;
+    --green-pale: #e8f5ee;
+    --green-mid: #c2e8d4;
+    --black: #0d0d0d;
+    --off-white: #f7f5f0;
+    --warm-grey: #e8e4dc;
+    --text-muted: #6b6b6b;
+    --gold: #c8a94a;
+    --red: #e05252;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--black);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 3rem;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--warm-grey);
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--green); letter-spacing: -0.5px; }
+  .logo span { color: var(--black); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--black); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    background: var(--green); color: white; padding: 0.55rem 1.4rem;
+    border-radius: 100px; font-size: 0.88rem; font-weight: 600;
+    text-decoration: none; transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--green-light); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; padding: 7rem 3rem 4rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+    align-items: center; max-width: 1280px; margin: 0 auto;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--green-pale); border: 1px solid var(--green-mid);
+    color: var(--green); font-size: 0.78rem; font-weight: 600;
+    padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .hero-badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 4.5vw, 4.2rem);
+    font-weight: 900; line-height: 1.08; letter-spacing: -1.5px;
+    color: var(--black); margin-bottom: 1.5rem;
+  }
+  h1 em { color: var(--green); font-style: normal; }
+  .hero-sub {
+    font-size: 1.08rem; color: var(--text-muted); line-height: 1.7;
+    margin-bottom: 2.2rem; max-width: 480px; font-weight: 400;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--green); color: white;
+    padding: 0.85rem 2rem; border-radius: 100px;
+    font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.2s; text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,107,74,0.25); }
+  .btn-secondary {
+    background: transparent; color: var(--black);
+    padding: 0.85rem 2rem; border-radius: 100px;
+    font-size: 0.95rem; font-weight: 600; border: 2px solid var(--warm-grey); cursor: pointer;
+    transition: all 0.2s; text-decoration: none; display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+  .hero-stats {
+    display: flex; gap: 2.5rem; margin-top: 3rem;
+    padding-top: 2rem; border-top: 1px solid var(--warm-grey);
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--green); }
+  .stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ── SEARCH CARD ── */
+  .hero-right { position: relative; }
+  .search-card {
+    background: white; border-radius: 20px; padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+    border: 1px solid var(--warm-grey);
+  }
+  .search-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--black); }
+  .search-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .tab {
+    padding: 0.5rem 1.2rem; border-radius: 100px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; border: 2px solid var(--warm-grey); background: white; color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--green); color: white; border-color: var(--green); }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.4rem; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--warm-grey);
+    border-radius: 12px; font-size: 0.95rem; font-family: 'DM Sans', sans-serif;
+    color: var(--black); background: var(--off-white); outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--green); background: white; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .search-btn {
+    width: 100%; padding: 0.9rem; background: var(--green); color: white;
+    border: none; border-radius: 12px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .search-btn:hover { background: var(--green-light); transform: translateY(-1px); }
+  .trust-badges {
+    display: flex; align-items: center; gap: 1rem; margin-top: 1.2rem;
+    padding-top: 1.2rem; border-top: 1px solid var(--warm-grey);
+  }
+  .trust-badge { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+  .trust-icon { font-size: 0.9rem; }
+  .floating-tag {
+    position: absolute; background: white; border-radius: 12px; padding: 0.6rem 1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1); font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .floating-tag-1 { top: -1.5rem; right: -1.5rem; color: var(--green); border: 1px solid var(--green-mid); }
+  .floating-tag-2 { bottom: -1rem; left: -1.5rem; color: var(--black); border: 1px solid var(--warm-grey); }
+
+  /* ── PROBLEMS ── */
+  .section { padding: 6rem 3rem; max-width: 1280px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--green); margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 900; line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 1rem;
+  }
+  .section-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; }
+  .problems-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+  .problem-card {
+    background: white; border-radius: 16px; padding: 1.8rem;
+    border: 1px solid var(--warm-grey);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .problem-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.07); }
+  .problem-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .problem-card h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .problem-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; }
+  .problem-stat { display: inline-block; margin-top: 0.8rem; background: var(--green-pale); color: var(--green); font-size: 0.78rem; font-weight: 700; padding: 0.3rem 0.8rem; border-radius: 100px; }
+
+  /* ── HOW IT WORKS ── */
+  .how-bg { background: var(--black); color: white; padding: 6rem 3rem; }
+  .how-inner { max-width: 1280px; margin: 0 auto; }
+  .how-bg .section-label { color: var(--gold); }
+  .how-bg .section-title { color: white; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 4rem; position: relative; }
+  .steps::before {
+    content: ''; position: absolute; top: 2.2rem; left: 12%; right: 12%; height: 1px;
+    background: linear-gradient(90deg, transparent, #333, #333, transparent);
+  }
+  .step { text-align: center; }
+  .step-num {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--green);
+    color: white; font-weight: 900; font-size: 1rem; display: flex;
+    align-items: center; justify-content: center; margin: 0 auto 1.2rem;
+    font-family: 'Playfair Display', serif; position: relative; z-index: 1;
+  }
+  .step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: white; }
+  .step p { font-size: 0.85rem; color: #888; line-height: 1.6; }
+
+  /* ── LISTINGS ── */
+  .listings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .listing-card {
+    background: white; border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--warm-grey); transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .listing-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.09); }
+  .listing-img {
+    height: 180px; background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .listing-img-bg {
+    width: 100%; height: 100%; object-fit: cover;
+    background: linear-gradient(135deg, var(--green-pale), var(--green-mid));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+  }
+  .verified-badge {
+    position: absolute; top: 0.8rem; left: 0.8rem;
+    background: var(--green); color: white; font-size: 0.7rem; font-weight: 700;
+    padding: 0.3rem 0.7rem; border-radius: 100px; letter-spacing: 0.04em;
+  }
+  .price-badge {
+    position: absolute; bottom: 0.8rem; right: 0.8rem;
+    background: white; color: var(--black); font-size: 0.85rem; font-weight: 800;
+    padding: 0.3rem 0.8rem; border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .listing-body { padding: 1.2rem; }
+  .listing-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .listing-loc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.3rem; }
+  .listing-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .tag { background: var(--off-white); font-size: 0.73rem; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 100px; color: var(--text-muted); }
+  .listing-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 0.8rem; border-top: 1px solid var(--warm-grey); }
+  .fair-rent { font-size: 0.75rem; color: var(--green); font-weight: 700; }
+  .contact-btn {
+    background: var(--green); color: white; font-size: 0.78rem; font-weight: 700;
+    padding: 0.4rem 1rem; border-radius: 100px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: background 0.2s;
+  }
+  .contact-btn:hover { background: var(--green-light); }
+
+  /* ── FEATURES ── */
+  .features-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; margin-top: 2rem; }
+  .feature-list { display: flex; flex-direction: column; gap: 1.5rem; }
+  .feature-item { display: flex; gap: 1rem; align-items: flex-start; cursor: pointer; padding: 1.2rem; border-radius: 14px; transition: background 0.2s; border: 2px solid transparent; }
+  .feature-item:hover, .feature-item.active { background: var(--green-pale); border-color: var(--green-mid); }
+  .feature-icon-wrap { width: 44px; height: 44px; border-radius: 12px; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .feature-text h4 { font-weight: 700; margin-bottom: 0.3rem; font-size: 0.95rem; }
+  .feature-text p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+  .feature-demo {
+    background: white; border-radius: 20px; padding: 2rem;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.07); border: 1px solid var(--warm-grey);
+    min-height: 340px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .demo-header { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1.2rem; }
+  .rent-meter { margin-bottom: 1.5rem; }
+  .rent-meter-label { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .rent-bar { height: 10px; border-radius: 100px; background: var(--warm-grey); position: relative; }
+  .rent-fill { height: 100%; border-radius: 100px; background: var(--green); width: 62%; }
+  .rent-pointer { position: absolute; top: -6px; left: 62%; width: 22px; height: 22px; border-radius: 50%; background: var(--green); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transform: translateX(-50%); }
+  .rent-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.4rem; }
+  .verdict { display: flex; align-items: center; gap: 0.7rem; padding: 0.8rem 1rem; background: var(--green-pale); border-radius: 10px; border: 1px solid var(--green-mid); }
+  .verdict-icon { font-size: 1.2rem; }
+  .verdict-text { font-size: 0.85rem; font-weight: 600; color: var(--green); }
+  .ai-scan { display: flex; flex-direction: column; gap: 0.7rem; }
+  .scan-item { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; border-radius: 10px; background: var(--off-white); }
+  .scan-label { font-size: 0.82rem; font-weight: 500; }
+  .scan-ok { color: var(--green); font-weight: 700; font-size: 0.78rem; }
+  .scan-warn { color: var(--red); font-weight: 700; font-size: 0.78rem; }
+
+  /* ── PRICING ── */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .pricing-card {
+    background: white; border-radius: 20px; padding: 2rem;
+    border: 2px solid var(--warm-grey); transition: all 0.2s;
+  }
+  .pricing-card.featured { background: var(--green); border-color: var(--green); color: white; transform: scale(1.04); }
+  .pricing-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+  .plan-name { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; color: var(--text-muted); }
+  .pricing-card.featured .plan-name { color: rgba(255,255,255,0.7); }
+  .plan-price { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 900; margin-bottom: 0.3rem; }
+  .plan-price span { font-size: 1rem; font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  .plan-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
+  .pricing-card.featured .plan-desc { color: rgba(255,255,255,0.75); }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.8rem; }
+  .plan-features li { font-size: 0.85rem; display: flex; align-items: center; gap: 0.6rem; }
+  .plan-features li::before { content: '✓'; font-weight: 900; color: var(--green); font-size: 0.8rem; }
+  .pricing-card.featured .plan-features li::before { color: var(--gold); }
+  .plan-btn {
+    width: 100%; padding: 0.8rem; border-radius: 100px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; border: 2px solid var(--green); background: transparent; color: var(--green);
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .plan-btn:hover { background: var(--green); color: white; }
+  .pricing-card.featured .plan-btn { background: white; color: var(--green); border-color: white; }
+  .pricing-card.featured .plan-btn:hover { background: var(--green-pale); }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials-bg { background: var(--green); padding: 6rem 3rem; }
+  .testimonials-inner { max-width: 1280px; margin: 0 auto; }
+  .testimonials-bg .section-label { color: var(--gold); }
+  .testimonials-bg .section-title { color: white; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .testimonial-card { background: rgba(255,255,255,0.12); border-radius: 16px; padding: 1.8rem; border: 1px solid rgba(255,255,255,0.15); }
+  .stars { color: var(--gold); font-size: 0.85rem; margin-bottom: 0.8rem; letter-spacing: 0.1em; }
+  .testimonial-text { font-size: 0.92rem; color: rgba(255,255,255,0.9); line-height: 1.7; margin-bottom: 1.2rem; font-style: italic; }
+  .testimonial-author { display: flex; align-items: center; gap: 0.8rem; }
+  .author-avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: white; }
+  .author-name { font-weight: 700; font-size: 0.88rem; color: white; }
+  .author-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+
+  /* ── FOOTER ── */
+  footer { background: var(--black); color: white; padding: 4rem 3rem 2rem; }
+  .footer-inner { max-width: 1280px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--green); margin-bottom: 0.8rem; }
+  .footer-desc { font-size: 0.85rem; color: #888; line-height: 1.7; max-width: 280px; }
+  .footer-col h5 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 1rem; }
+  .footer-col a { display: block; font-size: 0.85rem; color: #aaa; text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; }
+  .footer-col a:hover { color: white; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid #222; font-size: 0.78rem; color: #666; }
+  .footer-bottom a { color: #666; text-decoration: none; }
+  .footer-bottom a:hover { color: white; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 24px; padding: 2.5rem; max-width: 480px; width: 90%; position: relative; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .modal-close { position: absolute; top: 1.2rem; right: 1.2rem; background: var(--off-white); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .modal-close:hover { background: var(--warm-grey); }
+  .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .modal p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .modal-form { display: flex; flex-direction: column; gap: 0.9rem; }
+  .modal-form input {
+    padding: 0.75rem 1rem; border: 1.5px solid var(--warm-grey); border-radius: 12px;
+    font-size: 0.95rem; font-family: 'DM Sans', sans-serif; outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal-form input:focus { border-color: var(--green); }
+  .modal-form button { padding: 0.85rem; background: var(--green); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+  .modal-form button:hover { background: var(--green-light); }
+  .modal-success { display: none; text-align: center; padding: 1rem 0; }
+  .modal-success .big-check { font-size: 3rem; margin-bottom: 0.8rem; }
+  .modal-success h4 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .modal-success p { font-size: 0.88rem; color: var(--text-muted); }
+
+  /* ── LISTING MODAL ── */
+  .listing-modal { max-width: 600px; }
+  .listing-modal-img { height: 200px; background: linear-gradient(135deg, var(--green-pale), var(--green-mid)); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 5rem; margin-bottom: 1.5rem; }
+  .listing-modal-price { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--green); margin-bottom: 0.3rem; }
+  .listing-modal-loc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+  .listing-modal-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .listing-modal-tag { background: var(--green-pale); color: var(--green); font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.8rem; border-radius: 100px; }
+  .ai-verdict { background: var(--green-pale); border: 1px solid var(--green-mid); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+  .ai-verdict-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); margin-bottom: 0.4rem; }
+  .ai-verdict-text { font-size: 0.88rem; color: var(--black); line-height: 1.6; }
+  .contact-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .contact-opt { padding: 0.75rem; border-radius: 12px; text-align: center; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 2px solid var(--warm-grey); background: white; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .contact-opt.primary { background: var(--green); color: white; border-color: var(--green); }
+  .contact-opt:hover { border-color: var(--green); color: var(--green); }
+  .contact-opt.primary:hover { background: var(--green-light); color: white; }
+
+  /* ── TOAST ── */
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--black); color: white; padding: 0.9rem 1.5rem; border-radius: 12px; font-size: 0.88rem; font-weight: 500; z-index: 300; transform: translateY(100px); opacity: 0; transition: all 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast .toast-icon { margin-right: 0.5rem; }
+
+  /* ── SECTION DIVIDER ── */
+  .divider { max-width: 1280px; margin: 0 auto; height: 1px; background: var(--warm-grey); }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-right { display: none; }
+    .problems-grid, .listings-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .features-layout { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1rem; }
+    .section { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Nest<span>IQ</span></div>
+  <div class="nav-links">
+    <a href="#how">How it Works</a>
+    <a href="#listings">Listings</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#" onclick="openModal('landlord-modal')">For Landlords</a>
+    <a href="#" class="nav-cta" onclick="openModal('signup-modal')">Get Started Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section style="padding-top: 5rem; background: var(--off-white);">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">🟢 Now live in Bengaluru & Hyderabad</div>
+      <h1>Find your home in <em>48 hours.</em> No broker. No stress.</h1>
+      <p class="hero-sub">NestIQ uses AI to match you with verified, broker-free rentals — and shows you if the rent is actually fair. Save up to ₹60,000 in broker fees.</p>
+      <div class="hero-actions">
+        <a href="#listings" class="btn-primary">Browse Listings →</a>
+        <a href="#how" class="btn-secondary">See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">₹42k</div><div class="stat-label">Avg. broker fee saved</div></div>
+        <div class="stat-item"><div class="stat-num">48hr</div><div class="stat-label">Avg. time to lease</div></div>
+        <div class="stat-item"><div class="stat-num">97%</div><div class="stat-label">Listings verified by AI</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="floating-tag floating-tag-1">✅ AI Verified Listing</div>
+      <div class="search-card">
+        <h3>Find your perfect home</h3>
+        <div class="search-tabs">
+          <div class="tab active" onclick="setTab(this)">Rent</div>
+          <div class="tab" onclick="setTab(this)">PG / Hostel</div>
+          <div class="tab" onclick="setTab(this)">Co-living</div>
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <select>
+            <option>Bengaluru</option>
+            <option>Hyderabad</option>
+            <option>Pune</option>
+            <option>Mumbai</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Locality / Area</label>
+          <input type="text" placeholder="e.g. Koramangala, HSR Layout...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>BHK Type</label>
+            <select>
+              <option>1 BHK</option>
+              <option>2 BHK</option>
+              <option>3 BHK</option>
+              <option>Studio</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Max Budget</label>
+            <select>
+              <option>₹15,000</option>
+              <option>₹20,000</option>
+              <option>₹25,000</option>
+              <option>₹35,000</option>
+              <option>₹50,000+</option>
+            </select>
+          </div>
+        </div>
+        <button class="search-btn" onclick="handleSearch()">🔍 Search Verified Listings</button>
+        <div class="trust-badges">
+          <div class="trust-badge"><span class="trust-icon">🛡️</span> AI Fraud Filter</div>
+          <div class="trust-badge"><span class="trust-icon">📊</span> Fair Rent Check</div>
+          <div class="trust-badge"><span class="trust-icon">⚡</span> 0 Broker Fee</div>
+        </div>
+      </div>
+      <div class="floating-tag floating-tag-2">📊 Rent is 8% below market avg</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">The Problem We Solve</div>
+  <h2 class="section-title">India's rental market is broken.<br>We're fixing it.</h2>
+  <p class="section-sub">Every urban renter in India loses thousands to a system designed against them. Here's what NestIQ eliminates.</p>
+  <div class="problems-grid">
+    <div class="problem-card">
+      <div class="problem-icon">💸</div>
+      <h4>The Broker Fee Trap</h4>
+      <p>Brokers charge 1–2 months' rent just to show you listings — often ones you could find yourself. NestIQ removes the middleman entirely.</p>
+      <span class="problem-stat">₹25k–₹60k saved per move</span>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🎭</div>
+      <h4>Fake & Ghost Listings</h4>
+      <p>Stolen photos, wrong prices, already-rented flats. Our AI fraud detection flags suspicious listings before they ever reach you.</p>
+      <span class="problem-stat">97% fake listings removed</span>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🌑</div>
+      <h4>Zero Price Transparency</h4>
+      <p>Is ₹22,000 for a 1BHK in Koramangala fair or overpriced? Our hyperlocal rent index tells you instantly — before you negotiate.</p>
+      <span class="problem-stat">Real-time rent benchmarking</span>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">⚖️</div>
+      <h4>Unequal Negotiation</h4>
+      <p>Landlords negotiate daily. Renters do it once every 3 years. Our AI coach gives you market data and scripts to level the field.</p>
+      <span class="problem-stat">Avg. ₹1,800/month saved on rent</span>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">📄</div>
+      <h4>Risky Paper Agreements</h4>
+      <p>Unregistered stamp paper agreements leave renters legally exposed. NestIQ's DigiLocker integration makes agreements instant and verified.</p>
+      <span class="problem-stat">Legal agreement in 5 minutes</span>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🔍</div>
+      <h4>Unverified Landlords</h4>
+      <p>You hand over a security deposit to a stranger. NestIQ verifies landlord identity via Aadhaar and property ownership records before listing.</p>
+      <span class="problem-stat">100% landlord-verified listings</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-bg" id="how">
+  <div class="how-inner">
+    <div class="section-label">Process</div>
+    <h2 class="section-title" style="color:white">From search to signed lease<br>in 4 simple steps</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Tell us what you need</h4>
+        <p>Enter your city, area, budget, and BHK type. Our AI immediately starts matching.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Get AI-verified listings</h4>
+        <p>Every listing is scanned for fraud, price fairness, and landlord identity before you see it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Visit & negotiate smart</h4>
+        <p>Book virtual or physical tours. Our negotiation coach tells you the right price to counter-offer.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Sign digitally & move in</h4>
+        <p>Generate a legally valid DigiLocker rent agreement in under 5 minutes. Done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LISTINGS -->
+<section class="section" id="listings">
+  <div class="section-label">Featured Listings</div>
+  <h2 class="section-title">AI-verified homes,<br>ready for you</h2>
+  <p class="section-sub">Every listing below has passed our 12-point fraud check and rent benchmark analysis.</p>
+  <div class="listings-grid" id="listings-grid">
+    <!-- Populated by JS -->
+  </div>
+  <div style="text-align:center; margin-top:2.5rem;">
+    <button class="btn-primary" onclick="openModal('signup-modal')">View All 200+ Listings →</button>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">AI Features</div>
+  <h2 class="section-title">Smarter tools for<br>smarter renting</h2>
+  <div class="features-layout">
+    <div class="feature-list">
+      <div class="feature-item active" onclick="showDemo('benchmark', this)">
+        <div class="feature-icon-wrap">📊</div>
+        <div class="feature-text">
+          <h4>Rent Benchmarking Engine</h4>
+          <p>Know the real market rate for any flat in any pincode before you negotiate.</p>
+        </div>
+      </div>
+      <div class="feature-item" onclick="showDemo('fraud', this)">
+        <div class="feature-icon-wrap">🛡️</div>
+        <div class="feature-text">
+          <h4>AI Fraud Detection</h4>
+          <p>12-point scan including image forensics, price anomaly detection, and landlord ID verification.</p>
+        </div>
+      </div>
+      <div class="feature-item" onclick="showDemo('agreement', this)">
+        <div class="feature-icon-wrap">⚡</div>
+        <div class="feature-text">
+          <h4>Instant DigiLocker Agreement</h4>
+          <p>Legally valid rent agreements signed digitally in under 5 minutes. Free for all users.</p>
+        </div>
+      </div>
+    </div>
+    <div class="feature-demo" id="feature-demo">
+      <!-- Demo content injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing" style="background: var(--off-white);">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Transparent pricing.<br>No broker, no catch.</h2>
+  <p class="section-sub">One flat fee per search cycle — still a fraction of what a broker would charge.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">₹0</div>
+      <div class="plan-desc">Explore NestIQ before you commit. See 3 listings for free.</div>
+      <ul class="plan-features">
+        <li>3 verified listings preview</li>
+        <li>Basic rent benchmark</li>
+        <li>AI fraud score (summary)</li>
+        <li>In-app landlord chat</li>
+      </ul>
+      <button class="plan-btn" onclick="openModal('signup-modal')">Start Free</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="plan-name">⭐ Most Popular</div>
+      <div class="plan-price">₹499 <span>/ search cycle</span></div>
+      <div class="plan-desc">Everything you need to find and secure your next home. One-time fee per move.</div>
+      <ul class="plan-features">
+        <li>Unlimited verified listings</li>
+        <li>Full rent benchmarking report</li>
+        <li>Detailed AI fraud report</li>
+        <li>Negotiation coach + scripts</li>
+        <li>Free DigiLocker agreement</li>
+        <li>Priority landlord connect</li>
+      </ul>
+      <button class="plan-btn" onclick="openModal('signup-modal')">Get Started</button>
+    </div>
+    <div class="pricing-card">
+      <div class="plan-name">Landlord</div>
+      <div class="plan-price">₹0 <span>to list</span></div>
+      <div class="plan-desc">List your property and reach verified, serious renters instantly.</div>
+      <ul class="plan-features">
+        <li>Free basic listing</li>
+        <li>Verified tenant profiles</li>
+        <li>Background check add-on (₹199)</li>
+        <li>Premium visibility (₹299/week)</li>
+        <li>Digital agreement support</li>
+      </ul>
+      <button class="plan-btn" onclick="openModal('landlord-modal')">List Your Property</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-bg">
+  <div class="testimonials-inner">
+    <div class="section-label">Reviews</div>
+    <h2 class="section-title">Renters love NestIQ</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Found a 1BHK in HSR Layout in 31 hours. The rent benchmark showed the landlord was asking 12% above market — I negotiated it down using NestIQ's script. Saved ₹38,000 in broker fees."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">PR</div>
+          <div><div class="author-name">Priya R.</div><div class="author-role">Software Engineer, Bengaluru</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"I've moved 4 times in 5 years. The last 2 were with NestIQ. The difference is night and day. The DigiLocker agreement alone saved me a trip to a notary and ₹3,000 in stamp paper."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">AK</div>
+          <div><div class="author-name">Arjun K.</div><div class="author-role">Product Manager, Hyderabad</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"NestIQ flagged a listing I was about to pay advance for as suspicious — same photos appeared in 3 other cities. Literally saved me from a ₹50,000 scam. This app is essential."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SN</div>
+          <div><div class="author-name">Sneha N.</div><div class="author-role">UX Designer, Bengaluru</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">NestIQ</div>
+        <p class="footer-desc">AI-powered rental marketplace. Find your next home in 48 hours — no broker, no stress. Live in Bengaluru & Hyderabad.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <a href="#listings">Browse Listings</a>
+        <a href="#how">How it Works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#" onclick="openModal('landlord-modal')">For Landlords</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About NestIQ</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Refund Policy</a>
+        <a href="#">Contact Us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 NestIQ Technologies Pvt. Ltd. · Bengaluru, India</span>
+      <div style="display:flex;gap:1.5rem;">
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="signup-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signup-modal')">✕</button>
+    <div id="signup-form-wrap">
+      <h3>Start finding your home</h3>
+      <p>Join 2,400+ renters who found their home on NestIQ. First 3 listings are free.</p>
+      <div class="modal-form">
+        <input type="text" placeholder="Full Name" id="signup-name">
+        <input type="email" placeholder="Email Address" id="signup-email">
+        <input type="tel" placeholder="Phone Number" id="signup-phone">
+        <select style="padding:0.75rem 1rem;border:1.5px solid var(--warm-grey);border-radius:12px;font-size:0.95rem;font-family:'DM Sans',sans-serif;outline:none;background:white;">
+          <option>Looking to rent</option>
+          <option>I'm a landlord</option>
+        </select>
+        <button onclick="handleSignup()">Create Free Account →</button>
+      </div>
+    </div>
+    <div class="modal-success" id="signup-success">
+      <div class="big-check">🎉</div>
+      <h4>You're on the list!</h4>
+      <p>We'll send your verified listings to your email within the hour. Welcome to NestIQ.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LANDLORD MODAL -->
+<div class="modal-overlay" id="landlord-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('landlord-modal')">✕</button>
+    <div id="landlord-form-wrap">
+      <h3>List your property</h3>
+      <p>Reach 2,400+ verified renters actively searching. Basic listing is always free.</p>
+      <div class="modal-form">
+        <input type="text" placeholder="Your Name" id="ll-name">
+        <input type="tel" placeholder="Phone Number" id="ll-phone">
+        <input type="text" placeholder="Property Address" id="ll-addr">
+        <select style="padding:0.75rem 1rem;border:1.5px solid var(--warm-grey);border-radius:12px;font-size:0.95rem;font-family:'DM Sans',sans-serif;outline:none;background:white;">
+          <option>1 BHK</option>
+          <option>2 BHK</option>
+          <option>3 BHK</option>
+          <option>Studio / PG Room</option>
+        </select>
+        <input type="text" placeholder="Expected Rent (₹)" id="ll-rent">
+        <button onclick="handleLandlord()">Submit Property →</button>
+      </div>
+    </div>
+    <div class="modal-success" id="landlord-success">
+      <div class="big-check">✅</div>
+      <h4>Property submitted!</h4>
+      <p>Our team will verify your listing within 24 hours and notify you when it's live. Serious renters only.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LISTING MODAL -->
+<div class="modal-overlay" id="listing-modal">
+  <div class="modal listing-modal">
+    <button class="modal-close" onclick="closeModal('listing-modal')">✕</button>
+    <div id="listing-modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon">✅</span><span id="toast-msg"></span></div>
+
+<script>
+const listings = [
+  { id:1, emoji:'🏠', title:'Spacious 2BHK — Koramangala 5th Block', loc:'📍 Koramangala, Bengaluru', price:'₹22,000/mo', tags:['2 BHK','Furnished','Lift','No Brokerage'], verdict:'Fair price — 6% below area average. Landlord identity verified via Aadhaar. No duplicate images found.', fairness:'Fair', area:'Koramangala' },
+  { id:2, emoji:'🏡', title:'Modern 1BHK — HSR Layout Sector 7', loc:'📍 HSR Layout, Bengaluru', price:'₹16,500/mo', tags:['1 BHK','Semi-furnished','2 mins to metro'], verdict:'Excellent value — 11% below HSR average. All 12 fraud checks passed. Registered owner confirmed.', fairness:'Great Deal', area:'HSR Layout' },
+  { id:3, emoji:'🏢', title:'Premium 3BHK — Gachibowli', loc:'📍 Gachibowli, Hyderabad', price:'₹38,000/mo', tags:['3 BHK','Fully furnished','Gated community','Pet friendly'], verdict:'Market rate — within 2% of Gachibowli median. Landlord has 4 prior verified tenants on NestIQ.', fairness:'Market Rate', area:'Gachibowli' },
+  { id:4, emoji:'🏘️', title:'Cosy 1BHK — Indiranagar 12th Main', loc:'📍 Indiranagar, Bengaluru', price:'₹19,000/mo', tags:['1 BHK','Unfurnished','24hr water','No brokerage'], verdict:'Slightly above average by ₹1,200/mo. We recommend negotiating to ₹17,500 based on similar listings.', fairness:'Negotiate', area:'Indiranagar' },
+  { id:5, emoji:'🏠', title:'Studio Apartment — Madhapur Hi-Tech City', loc:'📍 Madhapur, Hyderabad', price:'₹14,000/mo', tags:['Studio','Furnished','Gym','Near IT park'], verdict:'Great value — 14% below Madhapur average for furnished studios. Verified listing, no flags.', fairness:'Great Deal', area:'Madhapur' },
+  { id:6, emoji:'🏡', title:'2BHK with terrace — Whitefield', loc:'📍 Whitefield, Bengaluru', price:'₹24,000/mo', tags:['2 BHK','Semi-furnished','Terrace','Parking'], verdict:'Fair price for the area. Terrace access adds ~₹2,000 premium which is standard for Whitefield.', fairness:'Fair', area:'Whitefield' },
+];
+
+function renderListings() {
+  const grid = document.getElementById('listings-grid');
+  grid.innerHTML = listings.map(l => `
+    <div class="listing-card" onclick="openListingModal(${l.id})">
+      <div class="listing-img">
+        <div class="listing-img-bg">${l.emoji}</div>
+        <div class="verified-badge">✅ AI Verified</div>
+        <div class="price-badge">${l.price}</div>
+      </div>
+      <div class="listing-body">
+        <div class="listing-title">${l.title}</div>
+        <div class="listing-loc">${l.loc}</div>
+        <div class="listing-tags">${l.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="listing-footer">
+          <span class="fair-rent ${l.fairness==='Negotiate'?'style="color:var(--gold)"':''}">📊 ${l.fairness}</span>
+          <button class="contact-btn" onclick="event.stopPropagation();openListingModal(${l.id})">View Details</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openListingModal(id) {
+  const l = listings.find(x=>x.id===id);
+  document.getElementById('listing-modal-content').innerHTML = `
+    <div class="listing-modal-img">${l.emoji}</div>
+    <div class="listing-modal-price">${l.price}</div>
+    <div class="listing-modal-loc">${l.loc} · ${l.title}</div>
+    <div class="listing-modal-tags">${l.tags.map(t=>`<span class="listing-modal-tag">${t}</span>`).join('')}</div>
+    <div class="ai-verdict">
+      <div class="ai-verdict-title">🤖 NestIQ AI Verdict</div>
+      <div class="ai-verdict-text">${l.verdict}</div>
+    </div>
+    <div class="contact-options">
+      <button class="contact-opt primary" onclick="showToast('📞 Connecting you to the landlord...')">📞 Call Landlord</button>
+      <button class="contact-opt" onclick="showToast('💬 Chat opened in app')">💬 Chat</button>
+      <button class="contact-opt" onclick="showToast('📅 Tour request sent!')">📅 Book Tour</button>
+      <button class="contact-opt" onclick="showToast('📝 Agreement drafted!')">📝 Start Agreement</button>
+    </div>
+  `;
+  openModal('listing-modal');
+}
+
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function handleSearch() {
+  showToast('🔍 Searching verified listings...');
+  setTimeout(()=>{ document.getElementById('listings').scrollIntoView({behavior:'smooth'}); }, 600);
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) closeModal(o.id); });
+});
+
+function handleSignup() {
+  const name = document.getElementById('signup-name').value;
+  if (!name.trim()) { showToast('⚠️ Please enter your name'); return; }
+  document.getElementById('signup-form-wrap').style.display = 'none';
+  document.getElementById('signup-success').style.display = 'block';
+  showToast('🎉 Account created! Check your email.');
+}
+function handleLandlord() {
+  const name = document.getElementById('ll-name').value;
+  if (!name.trim()) { showToast('⚠️ Please enter your name'); return; }
+  document.getElementById('landlord-form-wrap').style.display = 'none';
+  document.getElementById('landlord-success').style.display = 'block';
+  showToast('✅ Property submitted for verification!');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+const demos = {
+  benchmark: `
+    <div class="demo-header">📊 Rent Benchmark — Koramangala 5th Block, 1BHK</div>
+    <div class="rent-meter">
+      <div class="rent-meter-label"><span>Listed price</span><span style="color:var(--green);font-weight:800">₹18,500/mo</span></div>
+      <div class="rent-bar"><div class="rent-fill"></div><div class="rent-pointer"></div></div>
+      <div class="rent-labels"><span>₹14,000 (Low)</span><span>₹22,000 (High)</span></div>
+    </div>
+    <div class="verdict">
+      <div class="verdict-icon">✅</div>
+      <div class="verdict-text">Fair price — 8% below the area average of ₹20,100. Good time to move in.</div>
+    </div>
+    <div style="margin-top:1rem;font-size:0.78rem;color:var(--text-muted)">Based on 47 verified leases in this pincode in the last 90 days.</div>
+  `,
+  fraud: `
+    <div class="demo-header">🛡️ AI Fraud Scan — 12-Point Check</div>
+    <div class="ai-scan">
+      <div class="scan-item"><span class="scan-label">📸 Image reverse search</span><span class="scan-ok">✓ Unique</span></div>
+      <div class="scan-item"><span class="scan-label">👤 Landlord Aadhaar verify</span><span class="scan-ok">✓ Verified</span></div>
+      <div class="scan-item"><span class="scan-label">🏠 Property ownership check</span><span class="scan-ok">✓ Confirmed</span></div>
+      <div class="scan-item"><span class="scan-label">💰 Price anomaly detection</span><span class="scan-ok">✓ Normal</span></div>
+      <div class="scan-item"><span class="scan-label">📋 Cross-listing duplicate check</span><span class="scan-ok">✓ No match</span></div>
+      <div class="scan-item"><span class="scan-label">📞 Phone number validation</span><span class="scan-ok">✓ Active</span></div>
+    </div>
+  `,
+  agreement: `
+    <div class="demo-header">⚡ DigiLocker Agreement — Ready in 5 min</div>
+    <div class="ai-scan">
+      <div class="scan-item"><span class="scan-label">1. Enter tenant & landlord details</span><span class="scan-ok">✓ Done</span></div>
+      <div class="scan-item"><span class="scan-label">2. Auto-fill rent, deposit, duration</span><span class="scan-ok">✓ Done</span></div>
+      <div class="scan-item"><span class="scan-label">3. DigiLocker eSign (both parties)</span><span class="scan-ok">✓ Signed</span></div>
+      <div class="scan-item"><span class="scan-label">4. Legal registration</span><span class="scan-ok">✓ Filed</span></div>
+      <div class="scan-item"><span class="scan-label">5. PDF sent to both emails</span><span class="scan-ok">✓ Sent</span></div>
+    </div>
+    <div style="margin-top:1rem;padding:0.8rem 1rem;background:var(--green-pale);border-radius:10px;font-size:0.82rem;color:var(--green);font-weight:600">
+      ₹0 cost · Legally valid · No stamp paper needed
+    </div>
+  `
+};
+
+function showDemo(key, el) {
+  document.querySelectorAll('.feature-item').forEach(f=>f.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('feature-demo').innerHTML = demos[key];
+}
+
+// Init
+renderListings();
+showDemo('benchmark', document.querySelector('.feature-item'));
+</script>
+</body>
+</html>
